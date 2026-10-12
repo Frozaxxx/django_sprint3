@@ -6,3 +6,8 @@ env/
 db.sqlite3
 .idea/
 .vscode/
+
+# Вёрстка и черновые файлы, которые не должны попадать в репозиторий
+/static/
+static-dev/
+html/

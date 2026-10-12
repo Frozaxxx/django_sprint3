@@ -6,9 +6,9 @@ from .models import Category, Post
 POSTS_ON_MAIN = 5
 
 
-def get_published_posts():
-    """Посты, которые можно показывать на сайте."""
-    return Post.objects.select_related(
+def filter_published_posts(posts):
+    """Оставить только посты, которые можно показывать на сайте."""
+    return posts.select_related(
         'author', 'category', 'location'
     ).filter(
         is_published=True,
@@ -18,12 +18,12 @@ def get_published_posts():
 
 
 def index(request):
-    post_list = get_published_posts()[:POSTS_ON_MAIN]
+    post_list = filter_published_posts(Post.objects)[:POSTS_ON_MAIN]
     return render(request, 'blog/index.html', {'post_list': post_list})
 
 
 def post_detail(request, post_id):
-    post = get_object_or_404(get_published_posts(), pk=post_id)
+    post = get_object_or_404(filter_published_posts(Post.objects), pk=post_id)
     return render(request, 'blog/detail.html', {'post': post})
 
 
@@ -31,7 +31,7 @@ def category_posts(request, category_slug):
     category = get_object_or_404(
         Category, slug=category_slug, is_published=True
     )
-    post_list = get_published_posts().filter(category=category)
+    post_list = filter_published_posts(category.posts)
     return render(
         request,
         'blog/category.html',
